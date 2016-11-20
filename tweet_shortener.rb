@@ -13,19 +13,16 @@ def dictionary
    'at' => '@',
    'and' => '&'
   }
-end 
+end
 
 def word_substituter(tweet)
   tweet_word_array = tweet.split(" ")
-  tweet_word_array.each_with_index do |word, i|
-    dictionary.keys.each do |blacklisted_word|
-        if word.downcase == blacklisted_word.downcase
-          tweet_word_array[i] = dictionary[blacklisted_word]
-        end
-      end
+  tweet_word_array.map do |word|
+    dictionary.each do |key, value|
+      word = value if word.downcase == key
   end
-  shortened_tweet = tweet_word_array.join(" ")
-  return shortened_tweet
+    word
+  end.join(" ")
 end
 
 
@@ -37,33 +34,19 @@ end
 
 def selective_tweet_shortener(tweet)
   if tweet.length > 140
-    tweet_word_array = tweet.split(" ")
-    tweet_word_array.each_with_index do |word, i|
-      dictionary.keys.each do |blacklisted_word|
-        if word.downcase == blacklisted_word.downcase
-          tweet_word_array[i] = dictionary[blacklisted_word]
-        end
-      end
-    end
-    selective_shortened_tweet = tweet_word_array.join(" ")
-    return selective_shortened_tweet
+   word_substituter(tweet)
   else
-    return tweet
+    tweet
   end
 end
 
 
 
 def shortened_tweet_truncator(tweet)
-  edited_tweet = ""
-  edited_tweet << selective_tweet_shortener(tweet)
-  if edited_tweet.length >= 140
-    "#{edited_tweet[0..136]}..."
+  subbed_tweet = word_substituter(tweet)
+  if subbed_tweet.length >= 140
+    "#{subbed_tweet[0..136]}..."
   else
-    "#{edited_tweet}"
+    subbed_tweet
   end
-end 
-
-
-
-
+end
